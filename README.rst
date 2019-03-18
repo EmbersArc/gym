@@ -43,8 +43,7 @@ should know:
 
 - `reset(self)`: Reset the environment's state. Returns `observation`.
 - `step(self, action)`: Step the environment by one timestep. Returns `observation`, `reward`, `done`, `info`.
-- `render(self, mode='human', close=False)`: Render one frame of the environment. The default mode will do something human friendly, such as pop up a window. Passing the `close` flag signals the renderer to close any such windows.
-
+- `render(self, mode='human')`: Render one frame of the environment. The default mode will do something human friendly, such as pop up a window. 
 Installation
 ============
 
@@ -183,7 +182,7 @@ sequence.
 Atari
 -----
 
-The Atari environments are a variety of Atari video games. If you didn't do the full install, you can install dependencies via ``pip install -e '.[atari]'`` (you'll need ``cmake`` installed) and then get started as follow:
+The Atari environments are a variety of Atari video games. If you didn't do the full install, you can install dependencies via ``pip install -e '.[atari]'`` (you'll need ``cmake`` installed) and then get started as follows:
 
 .. code:: python
 
@@ -197,7 +196,7 @@ This will install ``atari-py``, which automatically compiles the `Arcade Learnin
 Box2d
 -----------
 
-Box2d is a 2D physics engine. You can install it via  ``pip install -e '.[box2d]'`` and then get started as follow:
+Box2d is a 2D physics engine. You can install it via  ``pip install -e '.[box2d]'`` and then get started as follows:
 
 .. code:: python
 
@@ -296,6 +295,14 @@ We are using `pytest <http://doc.pytest.org>`_ for tests. You can run them via:
 
 What's new
 ==========
+
+- 2019-02-26 (v0.12.0)
+    + release mujoco environments v3 with support for gym.make kwargs such as `xml_file`, `ctrl_cost_weight`, `reset_noise_scale` etc
+
+- 2019-02-06 (v0.11.0)
+    + remove gym.spaces.np_random common PRNG; use per-instance PRNG instead.
+    + support for kwargs in gym.make
+    + lots of bugfixes
 
 - 2018-02-28: Release of a set of new robotics environments.
 - 2018-01-25: Made some aesthetic improvements and removed unmaintained parts of gym. This may seem like a downgrade in functionality, but it is actually a long-needed cleanup in preparation for some great new things that will be released in the next month.

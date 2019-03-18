@@ -92,7 +92,6 @@ class Env(object):
 
         Args:
             mode (str): the mode to render with
-            close (bool): close all open renderings
 
         Example:
 
@@ -150,6 +149,14 @@ class Env(object):
         else:
             return '<{}<{}>>'.format(type(self).__name__, self.spec.id)
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.close()
+        # propagate exception
+        return False
+
 
 class GoalEnv(Env):
     """A goal-based environment. It functions just as any regular OpenAI Gym environment but it
@@ -189,45 +196,6 @@ class GoalEnv(Env):
                 assert reward == env.compute_reward(ob['achieved_goal'], ob['goal'], info)
         """
         raise NotImplementedError()
-
-# Space-related abstractions
-
-class Space(object):
-    """Defines the observation and action spaces, so you can write generic
-    code that applies to any Env. For example, you can choose a random
-    action.
-    """
-    def __init__(self, shape=None, dtype=None):
-        import numpy as np # takes about 300-400ms to import, so we load lazily
-        self.shape = None if shape is None else tuple(shape)
-        self.dtype = None if dtype is None else np.dtype(dtype)
-
-    def sample(self):
-        """
-        Uniformly randomly sample a random element of this space
-        """
-        raise NotImplementedError
-
-    def contains(self, x):
-        """
-        Return boolean specifying if x is a valid
-        member of this space
-        """
-        raise NotImplementedError
-
-    def __contains__(self, x):
-        return self.contains(x)
-
-    def to_jsonable(self, sample_n):
-        """Convert a batch of samples from this space to a JSONable data type."""
-        # By default, assume identity is JSONable
-        return sample_n
-
-    def from_jsonable(self, sample_n):
-        """Convert a JSONable data type to a batch of samples from this space."""
-        # By default, assume identity is JSONable
-        return sample_n
-
 
 warn_once = True
 
@@ -315,8 +283,8 @@ class ObservationWrapper(Wrapper):
 
 
 class RewardWrapper(Wrapper):
-    def reset(self):
-        return self.env.reset()
+    def reset(self, **kwargs):
+        return self.env.reset(**kwargs)
 
     def step(self, action):
         observation, reward, done, info = self.env.step(action)
@@ -332,8 +300,8 @@ class ActionWrapper(Wrapper):
         action = self.action(action)
         return self.env.step(action)
 
-    def reset(self):
-        return self.env.reset()
+    def reset(self, **kwargs):
+        return self.env.reset(**kwargs)
 
     def action(self, action):
         deprecated_warn_once("%s doesn't implement 'action' method. Maybe it implements deprecated '_action' method." % type(self))
